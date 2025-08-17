@@ -192,7 +192,7 @@ function renderBoard(board) {
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
             const tileIndex = row * cols + col;
-            tiles[tileIndex].textContent = board[row][col] === 0 ? '' : board[row][col];
+            tiles[tileIndex].textContent = board[row][col] || '';
             tiles[tileIndex].classList.toggle('empty', board[row][col] === 0);
         }
     }
