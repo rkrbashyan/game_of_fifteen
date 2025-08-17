@@ -1,0 +1,15 @@
+{
+    "name": "game_of_fifteen",
+    "version": "1.0.0",
+    "description": "Game of Fifteen",
+    "main": "game.js",
+    "scripts": {
+        "start": "http-server index.html -o -p 0"
+    },
+    "keywords": [],
+    "author": "Ruben Krbashyan",
+    "license": "ISC",
+    "dependencies": {
+        "http-server": "^14.1.1"
+    }
+}

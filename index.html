@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>15 Puzzle</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+        <style>
+            :root {
+                --bg-color: #1a2130;
+                --surface-color: #243044;
+                --primary-color: #5a72a0;
+                --accent-color: #fdffe2;
+                --font-color: #dde6ed;
+                --shadow-color: rgba(0, 0, 0, 0.2);
+                --border-radius: 12px;
+                --gap: 10px;
+            }
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+            body {
+                font-family: 'Poppins', Arial, sans-serif;
+                background-color: var(--bg-color);
+                color: var(--font-color);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                padding: 20px;
+            }
+            .puzzle-wrapper {
+                background-color: var(--surface-color);
+                padding: 24px;
+                border-radius: var(--border-radius);
+                box-shadow: 0 8px 20px var(--shadow-color);
+                width: 100%;
+                max-width: 420px;
+            }
+            .title {
+                text-align: center;
+                font-size: 2.5rem;
+                color: var(--accent-color);
+                margin-bottom: 20px;
+                font-weight: 600;
+            }
+            .controls {
+                display: flex;
+                flex-wrap: wrap; /* Allow wrapping for difficulty slider */
+                gap: var(--gap);
+                margin-bottom: 20px;
+            }
+            .controls button {
+                flex: 1 1 30%; /* Allow buttons to share space */
+                background-color: var(--primary-color);
+                color: var(--accent-color);
+                border: none;
+                padding: 12px 16px;
+                border-radius: 8px;
+                font-size: 1rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background-color 0.2s ease, transform 0.2s ease;
+            }
+            .controls button:hover {
+                background-color: #6b85b9;
+                transform: translateY(-2px);
+            }
+            .difficulty-control {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-top: 10px;
+            }
+            .difficulty-control label {
+                font-size: 0.9rem;
+                font-weight: 600;
+                white-space: nowrap;
+            }
+            .difficulty-control input[type='range'] {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 100%;
+                height: 8px;
+                background: var(--bg-color);
+                border-radius: 5px;
+                outline: none;
+            }
+            .difficulty-control input[type='range']::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 20px;
+                height: 20px;
+                background: var(--primary-color);
+                cursor: pointer;
+                border-radius: 50%;
+            }
+            .difficulty-control input[type='range']::-moz-range-thumb {
+                width: 20px;
+                height: 20px;
+                background: var(--primary-color);
+                cursor: pointer;
+                border-radius: 50%;
+            }
+            .hidden {
+                visibility: hidden;
+            }
+            .container {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: var(--gap);
+                background-color: var(--bg-color);
+                padding: var(--gap);
+                border-radius: 8px;
+            }
+            .win-message {
+                text-align: center;
+                font-size: 1rem;
+                color: var(--accent-color);
+                margin: 20px 0;
+                font-weight: 600;
+                animation: fadeIn 0.5s ease-in-out;
+            }
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            .tile {
+                background-color: var(--primary-color);
+                color: var(--accent-color);
+                border: none;
+                border-radius: 8px;
+                font-size: 1.75rem;
+                font-weight: 600;
+                aspect-ratio: 1 / 1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+                user-select: none;
+                transition: background-color 0.2s ease, transform 0.2s ease;
+            }
+            .tile:hover {
+                background-color: #6b85b9;
+                transform: scale(1.05);
+            }
+            .tile.empty {
+                background-color: transparent;
+                cursor: default;
+                transform: none;
+                pointer-events: none;
+            }
+            .stats {
+                font-family: monospace;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-top: 20px;
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: var(--accent-color);
+                user-select: none;
+            }
+
+            .disable-user-interaction {
+                pointer-events: none;
+                user-select: none;
+            }
+        </style>
+        <script src="game.js" defer></script>
+    </head>
+    <body>
+        <main class="puzzle-wrapper">
+            <h1 class="title">Game of Fifteen</h1>
+
+            <div class="controls">
+                <button id="newGame">New Game</button>
+                <button id="restartGame" class="hidden">Restart</button>
+                <button id="solveGame">Solve</button>
+                <div class="difficulty-control">
+                    <label for="difficulty">Difficulty:</label>
+                    <input type="range" id="difficulty" name="difficulty" min="2" max="100" value="2" />
+                    <span id="difficultyValue">2</span>
+                </div>
+            </div>
+
+            <div id="winMessage" class="win-message"></div>
+
+            <div class="container">
+                <button class="tile"></button>
+                <button class="tile"></button>
+                <button class="tile"></button>
+                <button class="tile"></button>
+                <button class="tile"></button>
+                <button class="tile"></button>
+                <button class="tile"></button>
+                <button class="tile"></button>
+                <button class="tile"></button>
+                <button class="tile"></button>
+                <button class="tile"></button>
+                <button class="tile"></button>
+                <button class="tile"></button>
+                <button class="tile"></button>
+                <button class="tile"></button>
+                <button class="tile"></button>
+            </div>
+
+            <div class="stats">
+                <div id="moves">Moves: 0</div>
+                <div id="timer">00:00</div>
+            </div>
+        </main>
+    </body>
+</html>
