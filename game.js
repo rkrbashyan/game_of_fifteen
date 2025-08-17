@@ -17,7 +17,7 @@ let initialBoard = [];
 let currentBoard = [];
 const solutionMoves = [];
 
-// Listenners
+// Listeners
 const tiles = document.querySelectorAll('.tile');
 tiles.forEach((tile, index) => tile.addEventListener('click', () => tryMove(currentBoard, index)));
 
@@ -35,7 +35,6 @@ difficultySlider.addEventListener('input', (e) => {
 newGame();
 
 function newGame({ isRestart = false } = {}) {
-    restartButton.classList.remove('hidden');
     difficultySlider.disabled = true; // Disable difficulty slider on new game
     isWin = false;
     movesCount = 0;
@@ -205,7 +204,7 @@ async function solve() {
     document.body.classList.add('disable-user-interaction');
 
     for (let i = 0; i < solutionMoves.length; i++) {
-        await sleep(500); // Wait for 0.3 second before each move
+        await sleep(500); // Wait for 0.5 second before each move
         tryMove(currentBoard, solutionMoves[i][0] * cols + solutionMoves[i][1]);
     }
 
